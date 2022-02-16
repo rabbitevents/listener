@@ -113,7 +113,7 @@ class Worker
     {
         exit($status);
     }
-    
+
     /**
      * Enable async signals for the process.
      *
