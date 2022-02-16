@@ -25,15 +25,11 @@ abstract class Writer
      */
     protected function getStatus($event): string
     {
-        switch (get_class($event)) {
-            case MessageProcessing::class:
-                return self::STATUS_PROCESSING;
-            case MessageProcessed::class:
-                return self::STATUS_PROCESSED;
-            case HandlerExceptionOccurred::class:
-                return self::STATUS_EXCEPTION;
-            case MessageProcessingFailed::class:
-                return self::STATUS_FAILED;
-        }
+        return match (get_class($event)) {
+            MessageProcessing::class => self::STATUS_PROCESSING,
+            MessageProcessed::class => self::STATUS_PROCESSED,
+            HandlerExceptionOccurred::class => self::STATUS_EXCEPTION,
+            MessageProcessingFailed::class => self::STATUS_FAILED,
+        };
     }
 }
