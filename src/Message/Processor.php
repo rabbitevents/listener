@@ -30,6 +30,8 @@ class Processor
      */
     public function process(Message $message, ProcessingOptions $options): void
     {
+        $message->increaseAttempts();
+
         foreach (RabbitEvents::getListeners($message->event()) as $listener) {
             [$class, $callback] = $listener;
 

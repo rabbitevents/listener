@@ -10,7 +10,6 @@ class ProcessingOptions
         public string $service,
         public string $connectionName,
         public int $memory = 128,
-        public int $timeout = 60,
         public int $maxTries = 0,
         public int $sleep = 5
     ) {

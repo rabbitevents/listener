@@ -41,8 +41,6 @@ class Handler
 
     public function handle()
     {
-        $this->message->increaseAttempts();
-
         return call_user_func($this->listener, $this->message->event(), Arr::wrap($this->payload()));
     }
 

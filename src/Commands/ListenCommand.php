@@ -28,10 +28,9 @@ class ListenCommand extends Command
                             {--service= : The name of current service. Necessary to identify listeners}
                             {--connection= : The name of the queue connection to work}
                             {--memory=128 : The memory limit in megabytes}
-                            {--max-time=0 : The maximum number of seconds the worker should run}
                             {--timeout=60 : The number of seconds a massage could be handled}
-                            {--tries=1 : Number of times to attempt a job before logging it failed}
-                            {--sleep=5 : Sleep time in seconds before running failed job next time}
+                            {--tries=1 : Number of times to attempt to handle a Message before logging it failed}
+                            {--sleep=5 : Sleep time in seconds before handling failed message next time}
                             {--quiet: No console output}';
 
     /**
@@ -78,7 +77,6 @@ class ListenCommand extends Command
             $this->option('service') ?: $this->laravel['config']->get("app.name"),
             $this->option('connection') ?: $this->laravel['config']['rabbitevents.default'],
             (int) $this->option('memory'),
-            (int) $this->option('timeout'),
             (int) $this->option('tries'),
             (int) $this->option('sleep')
         );
