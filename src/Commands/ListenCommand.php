@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RabbitEvents\Listener\Commands;
 
 use Illuminate\Console\Command;
+use Interop\Amqp\AmqpQueue;
 use RabbitEvents\Foundation\Amqp\QueueFactory;
 use RabbitEvents\Foundation\Context;
 use RabbitEvents\Foundation\Support\QueueName;
@@ -61,19 +62,11 @@ class ListenCommand extends Command
         $worker->work(
             new Processor(new HandlerFactory($this->laravel), $this->laravel['events']),
             $context->createConsumer(
-                $this->getQueue($context, $options),
-                $this->option('event')
+                new QueueName($options->service, $this->argument('event')),
+                $this->argument('event')
             ),
             $options
         );
-    }
-
-    protected function getQueue(Context $context, ProcessingOptions $options)
-    {
-        return (new QueueFactory($context))
-            ->make(
-                new QueueName($options->service, $this->option('event'))
-            );
     }
 
     /**
