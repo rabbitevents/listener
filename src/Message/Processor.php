@@ -85,7 +85,7 @@ class Processor
      */
     protected function markAsFailedIfAlreadyExceedsMaxAttempts(Handler $handler, ProcessingOptions $options): void
     {
-        if ($options->maxTries === 0 || $handler->attempts() < $options->maxTries) {
+        if ($options->maxTries === 0 || $handler->attempts() <= $options->maxTries) {
             return;
         }
 
