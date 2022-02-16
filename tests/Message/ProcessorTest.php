@@ -43,6 +43,8 @@ class ProcessorTest extends TestCase
 
         $processor = new Processor($handlerFactory = new FakeHandlerFactory(), $this->events);
 
+        $this->message->setProperty('x-attempts', 2);
+
         $processor->process($this->message, $this->options());
 
         self::assertCount(2, $handlerFactory->handlers);
@@ -58,6 +60,8 @@ class ProcessorTest extends TestCase
         $this->events->shouldHaveReceived()
             ->dispatch(m::type(MessageProcessed::class))
             ->twice();
+
+        self::assertEquals(3, $this->message->attempts());
     }
 
     public function testPropagationStopped(): void
@@ -135,11 +139,11 @@ class ProcessorTest extends TestCase
         $handlerFired = false;
 
         $message = clone $this->message;
-        $message->setProperty('x-attempts', 3);
+        $message->setProperty('x-attempts', 2);
         $handler = new Handler(m::mock(Container::class), $message, static fn() => $handlerFired = true, \Closure::class);
 
         $processor = new Processor(new FakeHandlerFactory(), $this->events);
-        $processor->runHandler($handler, $this->options(['maxTries' => 3]));
+        $processor->runHandler($handler, $this->options(['maxTries' => 1]));
 
         self::assertTrue($handler->hasFailed());
         self::assertFalse($handlerFired);
