@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace RabbitEvents\Listener\Commands;
 
 use Illuminate\Console\Command;
-use Interop\Amqp\AmqpQueue;
-use RabbitEvents\Foundation\Amqp\QueueFactory;
 use RabbitEvents\Foundation\Context;
 use RabbitEvents\Foundation\Support\QueueName;
 use RabbitEvents\Listener\Events\HandlerExceptionOccurred;
