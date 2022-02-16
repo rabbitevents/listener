@@ -104,6 +104,17 @@ class Worker
     }
 
     /**
+     * Stop listening and bail out of the script.
+     *
+     * @param int $status
+     * @return void
+     */
+    protected function stop(int $status = 0): void
+    {
+        exit($status);
+    }
+    
+    /**
      * Enable async signals for the process.
      *
      * @return void
