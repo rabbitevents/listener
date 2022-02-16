@@ -2,10 +2,10 @@
 
 namespace RabbitEvents\Listener\Commands\Log;
 
-use Illuminate\Queue\Events\HandlerFailed;
 use RabbitEvents\Listener\Events\HandlerExceptionOccurred;
 use RabbitEvents\Listener\Events\MessageProcessed;
 use RabbitEvents\Listener\Events\MessageProcessing;
+use RabbitEvents\Listener\Events\MessageProcessingFailed;
 
 abstract class Writer
 {
@@ -15,12 +15,12 @@ abstract class Writer
     public const STATUS_FAILED = 'Failed';
 
     /**
-     * @param HandlerExceptionOccurred | MessageProcessing | MessageProcessed | HandlerFailed $event
+     * @param HandlerExceptionOccurred | MessageProcessing | MessageProcessed | MessageProcessingFailed $event
      */
     abstract public function log($event): void;
 
     /**
-     * @param HandlerExceptionOccurred | MessageProcessing | MessageProcessed | HandlerFailed $event
+     * @param HandlerExceptionOccurred | MessageProcessing | MessageProcessed | MessageProcessingFailed $event
      * @return string
      */
     protected function getStatus($event): string
@@ -32,7 +32,7 @@ abstract class Writer
                 return self::STATUS_PROCESSED;
             case HandlerExceptionOccurred::class:
                 return self::STATUS_EXCEPTION;
-            case HandlerFailed::class:
+            case MessageProcessingFailed::class:
                 return self::STATUS_FAILED;
         }
     }

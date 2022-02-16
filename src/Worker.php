@@ -41,7 +41,7 @@ class Worker
 
         while (true) {
             try {
-                if ($message = $consumer->nextMessage()) {
+                if ($message = $consumer->nextMessage($options->timeout)) {
                     try {
                         $processor->process($message, $options);
                     } finally {
