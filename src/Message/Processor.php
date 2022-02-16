@@ -60,7 +60,7 @@ class Processor
         try {
             $this->raiseBeforeEvent($handler);
 
-            $this->markHandlerAsFailedIfAlreadyExceedsMaxAttempts($handler, $options);
+            $this->markAsFailedIfAlreadyExceedsMaxAttempts($handler, $options);
 
             $response = $handler->handle();
 
@@ -81,7 +81,7 @@ class Processor
      * @param ProcessingOptions $options
      * @return void
      */
-    protected function markHandlerAsFailedIfAlreadyExceedsMaxAttempts(Handler $handler, ProcessingOptions $options): void
+    protected function markAsFailedIfAlreadyExceedsMaxAttempts(Handler $handler, ProcessingOptions $options): void
     {
         if ($options->maxTries === 0 || $handler->attempts() < $options->maxTries) {
             return;
@@ -117,7 +117,7 @@ class Processor
             // attempts it is allowed to run the next time we process it. If so we will just
             // go ahead and mark it as failed now, so we do not have to release this again.
             if (!$handler->hasFailed()) {
-                $this->markHandlerAsFailedIfWillExceedMaxAttempts($handler, $options->maxTries, $exception);
+                $this->markAsFailedIfWillExceedMaxAttempts($handler, $options->maxTries, $exception);
             }
 
             $this->raiseExceptionOccurredEvent($handler, $exception);
@@ -141,7 +141,7 @@ class Processor
      * @param Throwable $exception
      * @return void
      */
-    protected function markHandlerAsFailedIfWillExceedMaxAttempts(Handler $handler, int $maxTries, Throwable $exception): void
+    protected function markAsFailedIfWillExceedMaxAttempts(Handler $handler, int $maxTries, Throwable $exception): void
     {
         if ($maxTries > 0 && $handler->attempts() >= $maxTries) {
             $this->handleFail($handler, $exception);

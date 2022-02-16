@@ -56,8 +56,10 @@ class ServiceProvider extends BaseServiceProvider
     protected function registerPublishing(): void
     {
         if ($this->app->runningInConsole()) {
+            $serviceProvider = 'RabbitEventsServiceProvider';
+
             $this->publishes([
-                __DIR__ . "/../stubs/RabbitEventsServiceProvider.stub" => $this->app->path("Providers/RabbitEventsServiceProvider.php"),
+                __DIR__ . "/../stubs/$serviceProvider.stub" => $this->app->path("Providers/$serviceProvider.php"),
             ], 'rabbitevents-listener-provider');
         }
     }
