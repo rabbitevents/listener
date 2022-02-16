@@ -1,0 +1,12 @@
+name: Static code analysis
+
+on: [push]
+
+jobs:
+  static-code-analysis:
+    container: ghcr.io/nuwber/phpqa-docker:php8.1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: phpqa
+        run: phpqa
