@@ -1,13 +1,12 @@
 <?php
 
-namespace RabbitEvents\Listener\Commands\Log;
+declare(strict_types=1);
+
+namespace RabbitEvents\Listener\Console\Log;
 
 use RabbitEvents\Listener\Events\ListenerHandlerExceptionOccurred;
 use RabbitEvents\Listener\Events\ListenerHandled;
 use RabbitEvents\Listener\Events\ListenerHandling;
-use RabbitEvents\Listener\Events\ListenerHandleFailed;
-use RabbitEvents\Listener\Events\MessageProcessingFailed;
-use RabbitEvents\Listener\Events\WorkerStopping;
 
 abstract class Writer
 {

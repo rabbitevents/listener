@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace RabbitEvents\Listener\Commands;
+namespace RabbitEvents\Listener\Console;
 
 use Illuminate\Console\Command;
-use RabbitEvents\Listener\Facades\RabbitEvents;
+use RabbitEvents\Listener\Dispatcher;
 
 /**
  * @codeCoverageIgnore
@@ -26,9 +26,9 @@ class EventsListCommand extends Command
      */
     protected $description = 'List of registered broadcast events';
 
-    public function handle(): void
+    public function handle(Dispatcher $dispatcher): void
     {
-        $events = RabbitEvents::getEvents();
+        $events = $dispatcher->getEvents();
 
         if (count($events) === 0) {
             $this->error("There’re no events registered in the RabbitEvents Service Provider.");

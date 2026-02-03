@@ -2,25 +2,24 @@
 
 declare(strict_types=1);
 
-namespace RabbitEvents\Listener\Commands;
+namespace RabbitEvents\Listener\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use RabbitEvents\Foundation\Context;
-use RabbitEvents\Foundation\Support\Releaser;
+use RabbitEvents\Listener\Support\Releaser;
+use RabbitEvents\Listener\Dispatcher;
 use RabbitEvents\Listener\Events\ListenerHandled;
 use RabbitEvents\Listener\Events\ListenerHandleFailed;
 use RabbitEvents\Listener\Events\ListenerHandlerExceptionOccurred;
 use RabbitEvents\Listener\Events\ListenerHandling;
 use RabbitEvents\Listener\Events\MessageProcessingFailed;
 use RabbitEvents\Listener\Events\WorkerStopping;
-use RabbitEvents\Listener\Facades\RabbitEvents;
 use RabbitEvents\Listener\ListenerOptions;
 use RabbitEvents\Listener\Message\HandlerFactory;
 use RabbitEvents\Listener\Message\Processor;
 use RabbitEvents\Listener\QueueName;
 use RabbitEvents\Listener\Worker;
+use RabbitEvents\Listener\WorkerExitStatus;
 
 /**
  * @codeCoverageIgnore
@@ -55,7 +54,7 @@ class ListenCommand extends Command
      * Execute the console command.
      * @param Context $context
      * @param Worker $worker
-     * @return int
+     * @return WorkerExitStatus
      */
     public function handle(Context $context, Worker $worker)
     {
@@ -78,7 +77,7 @@ class ListenCommand extends Command
         );
 
         return $worker->work(
-            new Processor($handlerFactory, $this->laravel['events']),
+            new Processor($handlerFactory, $this->laravel['events'], $this->laravel[Dispatcher::class]),
             $context->makeConsumer($queue),
             $options
         );
@@ -107,10 +106,10 @@ class ListenCommand extends Command
         $events = $this->argument('events');
 
         if (is_null($events)) {
-            return RabbitEvents::getEvents();
+            return $this->laravel[Dispatcher::class]->getEvents();
         }
 
-        if (Str::contains($events, ',')) {
+        if (str_contains($events, ',')) {
             return array_map('trim', explode(',', $events));
         }
 
@@ -151,22 +150,16 @@ class ListenCommand extends Command
             $this->logWriters[] = new Log\Output($this->laravel, $this->output);
         }
 
+        $config = $this->laravel['config'];
         [$enabled, $defaultLoglevel, $channel] = $this->parseLoggingConfiguration();
 
-        if ($enabled) {
-            $this->logWriters[] = new Log\General($this->laravel, $defaultLoglevel, $channel);
+        if ($config->get('rabbitevents.logging.enabled', false)) {
+            $this->logWriters[] = new Log\General(
+                $this->laravel,
+                $config->get('rabbitevents.logging.level', 'info'),
+                $config->get('rabbitevents.logging.channel')
+            );
         }
-    }
-
-    private function parseLoggingConfiguration(): array
-    {
-        $config = $this->laravel['config']->get('rabbitevents');
-
-        return [
-            Arr::get($config, 'logging.enabled', false),
-            Arr::get($config, 'logging.level', 'info'),
-            Arr::get($config, 'logging.channel'),
-        ];
     }
 
     private function checkExtLoaded(): void

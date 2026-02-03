@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RabbitEvents\Listener\Commands\Log;
+namespace RabbitEvents\Listener\Console\Log;
 
 use Illuminate\Console\OutputStyle;
 use Illuminate\Contracts\Container\Container;
